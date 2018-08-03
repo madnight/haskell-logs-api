@@ -10,11 +10,5 @@ awk  '{gsub(">","",$2) gsub("<","",$2);printf "%s\t%s\t%s",FILENAME,$1,$2;$1="";
 `ls | grep -v "download.sh"` \
 > /tmp/"$1".txt
 
-sed -i '1s/^/date\ttime\tuser\tpost\n/' /tmp/*.txt
-
-export LC_ALL=en_US.utf8
-export LANG=en_US.utf8
-
-csvs-to-sqlite /tmp/"$1".txt /download/irc-logs.db -s $'\t'
-
+cp /tmp/"$1".txt /results
 rm /tmp/*

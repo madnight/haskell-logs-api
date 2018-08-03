@@ -5,16 +5,23 @@ RUN pacman -S --noconfirm wget python python-pip gcc
 RUN pip3 install csvs-to-sqlite datasette
 
 RUN mkdir /download
+RUN mkdir /results
 WORKDIR /download
 COPY download.sh /download
 
-RUN bash download.sh "haskell"    && \
-    bash download.sh "haskell-13" && \
-    bash download.sh "haskell-14" && \
-    bash download.sh "haskell-15" && \
-    bash download.sh "haskell-16" && \
-    bash download.sh "haskell-17"
-
+RUN bash download.sh "haskell"                                   && \
+    bash download.sh "haskell-13"                                && \
+    bash download.sh "haskell-14"                                && \
+    bash download.sh "haskell-15"                                && \
+    bash download.sh "haskell-16"                                && \
+    bash download.sh "haskell-17"                                && \
+    bash download.sh "haskell-17"                                && \
+    cat /results/*.txt > /results/db.txt                         && \
+    sed -i '1s/^/date\ttime\tuser\tpost\n/' /results/db.txt      && \
+    export LC_ALL=en_US.utf8                                     && \
+    export LANG=en_US.utf8                                       && \
+    csvs-to-sqlite /results/db.txt /download/irc-logs.db -s $'\t' && \
+    rm /results/*
 
 FROM python:3.6-slim-stretch as datasette
 RUN apt update && \

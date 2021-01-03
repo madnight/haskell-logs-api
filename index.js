@@ -1,8 +1,10 @@
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
-const rg = require("ripgrep-js");
+const rg = require("./rg");
 const express = require("express");
 const fs = require("fs");
+const _ = require("lodash");
+
 
 const app = express();
 const port = 3000;
@@ -22,10 +24,15 @@ app.get("/search/:query", async (req, res) => {
         res.status(400).send("search query does not match alphanum");
         return;
     }
+    if (searchTerm.length < 3) {
+        res.status(400).send("");
+        return;
+    }
     const rgResults = await rg(basePath, searchTerm);
-    const searchResult = rgResults.slice(0, 100);
+    const sortedRgResults =_.sortBy(rgResults, 'file');
+    const searchResult = sortedRgResults.slice(0, 100);
     searchResult.forEach((v) => delete v.column);
-    res.send(searchResult);
+    res.send({ hits: sortedRgResults.length, results: searchResult});
 });
 
 app.get("/file/:year/:month/:name", async (req, res) => {

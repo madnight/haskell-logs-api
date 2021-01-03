@@ -25,7 +25,7 @@ app.get("/search/:query", async (req, res) => {
         page ? page.replace("page=","") * 100 : 100,
         100
     );
-    if (!searchTerm.match(/^[0-9a-zA-Z,-,+]+$/)) {
+    if (!searchTerm.match(/^[0-9a-zA-Z,-,+,\s]+$/)) {
         res.status(400).send("search query does not match alphanum");
         return;
     }
@@ -33,7 +33,7 @@ app.get("/search/:query", async (req, res) => {
         res.status(400).send("");
         return;
     }
-    const rgResults = await rg(basePath, searchTerm);
+    const rgResults = await rg(basePath, '"' + searchTerm + '"');
     const sortedRgResults = _.sortBy(rgResults, "file");
     const searchResult = sortedRgResults.slice(pageNum - 100, pageNum);
     searchResult.forEach((v) => delete v.column);

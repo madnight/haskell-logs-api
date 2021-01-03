@@ -48,7 +48,8 @@ module.exports = function ripGrep(cwd, options, searchTerm) {
   }, execString);
 
   return new Promise(function(resolve, reject) {
-    exec(execString, { cwd, maxBuffer: 1024 * 500 }, (error, stdout, stderr) => {
+    const oneGigaByte = 1024 * 1024 * 1024;
+    exec(execString, { cwd, maxBuffer: oneGigaByte }, (error, stdout, stderr) => {
       if (!error || (error && stderr === '')) {
         resolve(formatResults(stdout));
       } else {

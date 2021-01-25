@@ -36,7 +36,7 @@ module.exports = function ripGrep(cwd, options, searchTerm) {
     options.globs = options.globs || [];
     options.string = searchTerm || options.string || "";
 
-    let execString = "rg --column --max-count 1 --line-number --color never";
+    let execString = "rg -j 32 --column --max-count 1 --line-number --color never";
     if (options.regex) {
         execString = `${execString} -e ${options.regex}`;
     } else if (options.string) {
